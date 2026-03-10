@@ -332,10 +332,52 @@ def leer_csv_seguro(file):
 
     raise Exception("No se pudo leer el archivo con codificaciones comunes")
 
+
+def cargar_csv_universal(file):
+
+    encodings = [
+        "utf-8",
+        "utf-8-sig",
+        "utf-16",
+        "latin1",
+        "cp1252"
+    ]
+
+    separadores = [",", ";", "\t", "|"]
+
+    for enc in encodings:
+        for sep in separadores:
+            try:
+                file.seek(0)
+                df = pd.read_csv(
+                    file,
+                    encoding=enc,
+                    sep=sep,
+                    engine="python"
+                )
+
+                # validar que tenga más de una columna
+                if len(df.columns) > 1:
+                    
+                    # limpiar columnas
+                    df.columns = (
+                        df.columns
+                        .str.strip()
+                        .str.lower()
+                        .str.replace("\ufeff", "", regex=False)
+                    )
+
+                    return df
+
+            except:
+                continue
+
+    raise Exception("No se pudo interpretar el archivo CSV")
 # df = leer_csv_seguro(uploaded_file)
 
 # df.columns = df.columns.str.lower()
-df = leer_csv_seguro(uploaded_file)
+# df = leer_csv_seguro(uploaded_file)
+df = cargar_csv_universal(uploaded_file)
 
 # limpiar nombres de columnas
 df.columns = (
