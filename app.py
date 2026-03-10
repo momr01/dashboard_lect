@@ -332,9 +332,19 @@ def leer_csv_seguro(file):
 
     raise Exception("No se pudo leer el archivo con codificaciones comunes")
 
+# df = leer_csv_seguro(uploaded_file)
+
+# df.columns = df.columns.str.lower()
 df = leer_csv_seguro(uploaded_file)
 
-df.columns = df.columns.str.lower()
+# limpiar nombres de columnas
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+)
+
+st.write("Columnas detectadas:", df.columns)
 
 # -----------------------------------
 # CONVERTIR FECHA
