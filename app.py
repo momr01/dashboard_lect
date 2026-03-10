@@ -235,6 +235,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import logging
 
 # -----------------------------------
 # CONFIG
@@ -552,13 +553,28 @@ lecturas_pendientes_total = lecturas_pendientes
 total_dias = df["f_lteor"].dt.date.nunique()
 
 # primer día del dataset (registro 0)
-primer_dia = df["f_lteor"].min().date()
+# primer_dia = df["f_lteor"].min().date()
 
-# día actual
+# # día actual
+# hoy = datetime.today().date()
+
+# # días transcurridos desde el primer registro hasta hoy
+# dias_transcurridos = (hoy - primer_dia).days + 1
+
+
 hoy = datetime.today().date()
 
-# días transcurridos desde el primer registro hasta hoy
-dias_transcurridos = (hoy - primer_dia).days + 1
+df["fecha"] = df["f_lteor"].dt.date
+
+primer_dia = df["fecha"].min()
+
+# fecha_cercana = df[df["fecha"] <= hoy]["fecha"].max()
+fecha_cercana = df[df["fecha"] < hoy]["fecha"].max()
+
+dias_transcurridos = df[
+    (df["fecha"] >= primer_dia) &
+    (df["fecha"] <= fecha_cercana)
+]["fecha"].nunique()
 
 # días restantes del período
 dias_restantes = total_dias - dias_transcurridos
@@ -567,6 +583,11 @@ promedio_requerido = (
     lecturas_pendientes_total / dias_restantes
     if dias_restantes > 0 else 0
 )
+
+st.header(f"total dias:  {total_dias}")
+st.header(f"dias transcurridos:  {dias_transcurridos}")
+st.header(f"dias restantes:  {dias_restantes}")
+
 
 # -----------------------------------
 # MOSTRAR KPIs
@@ -672,3 +693,4 @@ st.dataframe(df_filtrado, use_container_width=True)
 
 st.subheader("Todos los datos")
 st.dataframe(df, use_container_width=True)
+
