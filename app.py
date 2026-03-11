@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 import logging
 # import plotly.graph_objects as go
+import plotly.express as px
 from datetime import timedelta
 
 # -----------------------------------
@@ -951,6 +952,59 @@ else:
 
 
 
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+df_evol = df_base.groupby(df_base["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_ftl":"sum"
+}).reset_index()
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_ftl": "Lecturas realizadas"
+})
+
+# import plotly.express as px
+
+fig = px.line(
+    df_graf,
+    x="fecha",
+    y=["Lecturas programadas", "Lecturas realizadas"],
+    labels={
+        "fecha": "Día de lectura",
+        "value": "Cantidad de lecturas",
+        "variable": "Tipo"
+    },
+     markers=True
+)
+
+st.plotly_chart(fig, use_container_width=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -969,14 +1023,251 @@ df_evol = df_base.groupby(df_base["f_lteor"].dt.date).agg({
     "total_leidos_ftl":"sum"
 }).reset_index()
 
+# df_evol["fecha_str"] = df_evol["f_lteor"].dt.strftime("%d-%m")
+# df_evol["dia"] = df_evol["f_lteor"].dt.day
+
 df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
 
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_ftl": "Lecturas realizadas s/FTL"
+})
+
 st.line_chart(
-    df_evol.set_index("fecha")[[
-        "total_programados",
-        "total_leidos_ftl"
+    df_graf.set_index("fecha")[[
+        "Lecturas programadas",
+        "Lecturas realizadas s/FTL"
     ]]
 )
+
+
+
+
+
+# df_graf = df_evol.rename(columns={
+#     "total_programados": "Lecturas programadas",
+#     "total_leidos_actual": "Lecturas realizadas"
+# })
+
+# fig = px.line(
+#     df_graf,
+#     x="fecha",
+#     y=["Lecturas programadas", "Lecturas realizadas"],
+#     labels={
+#         "fecha": "Día de lectura",
+#         "value": "Cantidad de lecturas",
+#         "variable": "Tipo"
+#     }
+# )
+
+# st.plotly_chart(fig, use_container_width=True)
+
+
+
+# st.line_chart(
+#     df_evol.set_index("fecha")[[
+#         "total_programados",
+#         "total_leidos_ftl"
+#     ]]
+# )
+# st.line_chart(
+#     df_evol.set_index("fecha_str")[[
+#         "total_programados",
+#         "total_leidos_ftl"
+#     ]]
+# )
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ----------------------------------
+# GRAFICO EVOLUCION DIARIA DE LECTURAS
+# -----------------------------------
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+# df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+#     "total_programados":"sum",
+#     "total_leidos_ftl":"sum"
+# }).reset_index()
+df_evol = df_base.groupby(df_base["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_actual":"sum"
+}).reset_index()
+
+# df_evol["fecha_str"] = df_evol["f_lteor"].dt.strftime("%d-%m")
+# df_evol["dia"] = df_evol["f_lteor"].dt.day
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_actual": "Lecturas realizadas"
+})
+
+st.line_chart(
+    df_graf.set_index("fecha")[[
+        "Lecturas programadas",
+        "Lecturas realizadas"
+    ]]
+)
+
+
+# st.line_chart(
+#     df_evol.set_index("fecha")[[
+#         "total_programados",
+#         "total_leidos_actual"
+#     ]]
+# )
+# st.line_chart(
+#     df_evol.set_index("fecha_str")[[
+#         "total_programados",
+#         "total_leidos_ftl"
+#     ]]
+# )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ----------------------------------
+# GRAFICO EVOLUCION DIARIA DE LECTURAS
+# -----------------------------------
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+# df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+#     "total_programados":"sum",
+#     "total_leidos_ftl":"sum"
+# }).reset_index()
+df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_ftl":"sum"
+}).reset_index()
+
+# df_evol["fecha_str"] = df_evol["f_lteor"].dt.strftime("%d-%m")
+# df_evol["dia"] = df_evol["f_lteor"].dt.day
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_ftl": "Lecturas realizadas s/FTL"
+})
+
+st.line_chart(
+    df_graf.set_index("fecha")[[
+        "Lecturas programadas",
+        "Lecturas realizadas s/FTL"
+    ]]
+)
+
+
+# st.line_chart(
+#     df_evol.set_index("fecha")[[
+#         "total_programados",
+#         "total_leidos_ftl"
+#     ]]
+# )
+# st.line_chart(
+#     df_evol.set_index("fecha_str")[[
+#         "total_programados",
+#         "total_leidos_ftl"
+#     ]]
+# )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ----------------------------------
+# GRAFICO EVOLUCION DIARIA DE LECTURAS
+# -----------------------------------
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+# df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+#     "total_programados":"sum",
+#     "total_leidos_ftl":"sum"
+# }).reset_index()
+df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_actual":"sum"
+}).reset_index()
+
+# df_evol["fecha_str"] = df_evol["f_lteor"].dt.strftime("%d-%m")
+# df_evol["dia"] = df_evol["f_lteor"].dt.day
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_actual": "Lecturas realizadas"
+})
+
+st.line_chart(
+    df_graf.set_index("fecha")[[
+        "Lecturas programadas",
+        "Lecturas realizadas"
+    ]]
+)
+
+
+# st.line_chart(
+#     df_evol.set_index("fecha")[[
+#         "total_programados",
+#         "total_leidos_actual"
+#     ]]
+# )
+# st.line_chart(
+#     df_evol.set_index("fecha_str")[[
+#         "total_programados",
+#         "total_leidos_ftl"
+#     ]]
+# )
+
+
+
+
+
+
+
 
 
 
