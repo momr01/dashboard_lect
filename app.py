@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime
 import logging
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 from datetime import timedelta
 
 # -----------------------------------
@@ -514,35 +514,48 @@ st.space("large") # Añade un espacio grande
 
 
 
-st.subheader("Indicador de atraso operativo")
+# st.subheader("Indicador de atraso operativo")
 
-fig = go.Figure(go.Indicator(
-    mode="gauge+number",
-    value=kpi_atraso,
-    title={'text': "Atraso (días)"},
+# fig = go.Figure(go.Indicator(
+#     mode="gauge+number",
+#     value=kpi_atraso,
+#     title={'text': "Atraso (días)"},
     
-    gauge={
-        'axis': {'range': [0, 5]},
+#     gauge={
+#         'axis': {'range': [0, 5]},
         
-        'bar': {'color': "black"},
+#         'bar': {'color': "black"},
         
-        'steps': [
-            {'range': [0, 1], 'color': "#16a34a"},   # verde
-            {'range': [1, 2], 'color': "#f59e0b"},   # amarillo
-            {'range': [2, 5], 'color': "#ef4444"}    # rojo
-        ],
+#         'steps': [
+#             {'range': [0, 1], 'color': "#16a34a"},   # verde
+#             {'range': [1, 2], 'color': "#f59e0b"},   # amarillo
+#             {'range': [2, 5], 'color': "#ef4444"}    # rojo
+#         ],
         
-        'threshold': {
-            'line': {'color': "black", 'width': 4},
-            'thickness': 0.75,
-            'value': kpi_atraso
-        }
-    }
-))
+#         'threshold': {
+#             'line': {'color': "black", 'width': 4},
+#             'thickness': 0.75,
+#             'value': kpi_atraso
+#         }
+#     }
+# ))
 
-st.plotly_chart(fig, use_container_width=True)
+# st.plotly_chart(fig, use_container_width=True)
 
-max_atraso = total_programados / promedio_diario_programado
+# max_atraso = total_programados / promedio_diario_programado
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 st.space("large") # Añade un espacio grande
