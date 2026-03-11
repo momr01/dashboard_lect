@@ -964,7 +964,65 @@ df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
 
 df_graf = df_evol.rename(columns={
     "total_programados": "Lecturas programadas",
-    "total_leidos_ftl": "Lecturas realizadas"
+    "total_leidos_ftl": "Lecturas realizadas s/FTL"
+})
+
+# import plotly.express as px
+
+fig = px.line(
+    df_graf,
+    x="fecha",
+    y=["Lecturas programadas", "Lecturas realizadas s/FTL"],
+    labels={
+        "fecha": "Día de lectura",
+        "value": "Cantidad de lecturas",
+        "variable": "Tipo"
+    },
+     markers=True,
+     title="Evolución diaria de lecturas s/FTL"
+)
+
+fig.update_layout(
+    yaxis=dict(
+        tickformat=","
+    )
+)
+
+st.plotly_chart(fig, use_container_width=True, key="todo_ftl")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+df_evol = df_base.groupby(df_base["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_actual":"sum"
+}).reset_index()
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_actual": "Lecturas realizadas"
 })
 
 # import plotly.express as px
@@ -978,10 +1036,17 @@ fig = px.line(
         "value": "Cantidad de lecturas",
         "variable": "Tipo"
     },
-     markers=True
+     markers=True,
+       title="Evolución diaria de lecturas s/fecha actual"
 )
 
-st.plotly_chart(fig, use_container_width=True)
+fig.update_layout(
+    yaxis=dict(
+        tickformat=","
+    )
+)
+
+st.plotly_chart(fig, use_container_width=True, key="todo_actual")
 
 
 
@@ -995,6 +1060,115 @@ st.plotly_chart(fig, use_container_width=True)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_ftl":"sum"
+}).reset_index()
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_ftl": "Lecturas realizadas s/FTL"
+})
+
+# import plotly.express as px
+
+fig = px.line(
+    df_graf,
+    x="fecha",
+    y=["Lecturas programadas", "Lecturas realizadas s/FTL"],
+    labels={
+        "fecha": "Día de lectura",
+        "value": "Cantidad de lecturas",
+        "variable": "Tipo"
+    },
+     markers=True,
+       title="Evolución diaria de lecturas s/FTL"
+)
+
+fig.update_layout(
+    yaxis=dict(
+        tickformat=","
+    )
+)
+
+st.plotly_chart(fig, use_container_width=True, key="filtrado_ftl")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+df_evol = df_filtrado.groupby(df_filtrado["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_actual":"sum"
+}).reset_index()
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_actual": "Lecturas realizadas"
+})
+
+# import plotly.express as px
+
+fig = px.line(
+    df_graf,
+    x="fecha",
+    y=["Lecturas programadas", "Lecturas realizadas"],
+    labels={
+        "fecha": "Día de lectura",
+        "value": "Cantidad de lecturas",
+        "variable": "Tipo"
+    },
+     markers=True,
+       title="Evolución diaria de lecturas s/fecha actual"
+     
+)
+
+fig.update_layout(
+    yaxis=dict(
+        tickformat=","
+    )
+)
+
+st.plotly_chart(fig, use_container_width=True, key="filtrado_actual")
 
 
 
