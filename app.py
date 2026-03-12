@@ -4,6 +4,7 @@ from datetime import datetime
 import logging
 # import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
 from datetime import timedelta
 
 # -----------------------------------
@@ -969,6 +970,314 @@ df_graf = df_evol.rename(columns={
 
 # import plotly.express as px
 
+df_graf["Atraso diario"] = (
+    df_graf["Lecturas programadas"] -
+    df_graf["Lecturas realizadas s/FTL"]
+)
+
+total_programado_periodo = df_graf["Lecturas programadas"].sum()
+total_dias = len(df_graf)
+
+df_graf["dia_n"] = range(1, total_dias + 1)
+
+df_graf["Ritmo ideal"] = (
+    total_programado_periodo / total_dias
+) * df_graf["dia_n"]
+
+# fig = px.line(
+#     df_graf,
+#     x="fecha",
+#     y=["Lecturas programadas", "Lecturas realizadas s/FTL"
+#        , "Atraso diario"],
+#     labels={
+#         "fecha": "Día de lectura",
+#         "value": "Cantidad de lecturas",
+#         "variable": "Tipo"
+#     },
+#      markers=True,
+#      title="Evolución diaria de lecturas s/FTL",
+#     #  color_discrete_sequence=["#1f77b4", "#d62728"]  # azul y rojo
+#      color_discrete_sequence=[
+#         "#2563eb",  # azul programados
+#         "#16a34a",  # verde leídos
+#         "#ef4444"   # rojo atraso
+#     ]
+# )
+
+# fig.update_layout(
+#     yaxis=dict(
+#         tickformat=","
+#     )
+# )
+
+# fig.update_traces(
+#     texttemplate='%{y:,.0f}',
+#     textposition="top center"
+# )
+# for trace in fig.data:
+#     trace.text = trace.y
+#     trace.texttemplate = '%{text:,.0f}'
+#     trace.textposition = 'top center'
+#     trace.mode = 'lines+markers+text'
+
+
+# import plotly.graph_objects as go
+
+# fig = go.Figure()
+
+# # Línea programados
+# fig.add_trace(go.Scatter(
+#     x=df_graf["fecha"],
+#     y=df_graf["Lecturas programadas"],
+#     mode="lines+markers+text",
+#     name="Lecturas programadas",
+#     line=dict(color="#2563eb"),
+#     text=df_graf["Lecturas programadas"],
+#     texttemplate="%{text:,.0f}",
+#     textposition="top center"
+# ))
+
+# # Línea leídos
+# fig.add_trace(go.Scatter(
+#     x=df_graf["fecha"],
+#     y=df_graf["Lecturas realizadas s/FTL"],
+#     mode="lines+markers+text",
+#     name="Lecturas realizadas s/FTL",
+#     line=dict(color="#16a34a"),
+#     text=df_graf["Lecturas realizadas s/FTL"],
+#     texttemplate="%{text:,.0f}",
+#     textposition="bottom center",
+#     fill="tonexty",  # 🔥 relleno entre líneas
+#     fillcolor="rgba(239,68,68,0.25)"
+# ))
+
+# fig.update_layout(
+#     title="Evolución diaria de lecturas s/FTL",
+#     xaxis_title="Día de lectura",
+#     yaxis_title="Cantidad de lecturas",
+#     yaxis=dict(tickformat=",")
+# )
+
+fig = go.Figure()
+
+# PROGRAMADOS
+fig.add_trace(go.Scatter(
+    x=df_graf["fecha"],
+    y=df_graf["Lecturas programadas"],
+    mode="lines+markers+text",
+    name="Lecturas programadas",
+    line=dict(color="#2563eb"),
+    text=df_graf["Lecturas programadas"],
+    texttemplate="%{text:,.0f}",
+    textposition="top center"
+))
+
+# LEIDOS
+fig.add_trace(go.Scatter(
+    x=df_graf["fecha"],
+    y=df_graf["Lecturas realizadas s/FTL"],
+    mode="lines+markers+text",
+    name="Lecturas realizadas",
+    line=dict(color="#16a34a"),
+    text=df_graf["Lecturas realizadas s/FTL"],
+    texttemplate="%{text:,.0f}",
+    textposition="bottom center",
+    fill="tonexty",
+    fillcolor="rgba(239,68,68,0.25)"
+))
+
+# RITMO IDEAL
+fig.add_trace(go.Scatter(
+    x=df_graf["fecha"],
+    y=df_graf["Ritmo ideal"],
+    mode="lines",
+    name="Ritmo ideal",
+    line=dict(
+        color="#f59e0b",
+        dash="dash",
+        width=3
+    )
+))
+
+fig.update_layout(
+    title="Evolución diaria de lecturas s/FTL",
+    xaxis_title="Día de lectura",
+    yaxis_title="Cantidad de lecturas",
+    yaxis=dict(tickformat=",")
+)
+
+# st.plotly_chart(fig, use_container_width=True, key="todo_ftl")
+
+st.plotly_chart(fig, use_container_width=True, key="todo_ftl_completo")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+lecturas_realizadas = df_graf["Lecturas realizadas s/FTL"].sum()
+
+dias_transcurridos = len(df_graf)
+
+ritmo_actual = (
+    lecturas_realizadas / dias_transcurridos
+    if dias_transcurridos > 0 else 0
+)
+
+
+total_programado = df_graf["Lecturas programadas"].sum()
+
+dias_estimados = (
+    total_programado / ritmo_actual
+    if ritmo_actual > 0 else 0
+)
+
+from datetime import timedelta
+
+fecha_inicio = df_graf["fecha"].min()
+
+fecha_fin_estimada = fecha_inicio + timedelta(days=int(dias_estimados))
+
+st.metric(
+    "📅 Fecha estimada de finalización",
+    fecha_fin_estimada.strftime("%d-%m-%Y")
+)
+
+
+
+
+
+
+
+
+
+
+fecha_fin_programada = df_graf["fecha"].max()
+
+desvio = (fecha_fin_estimada - fecha_fin_programada).days
+
+
+st.metric(
+    "⏱ Desvío estimado",
+    f"{desvio} días",
+    delta=desvio
+)
+
+
+
+
+
+
+
+
+
+
+
+
+ritmo_necesario = (
+    lecturas_pendientes_total / dias_restantes
+    if dias_restantes > 0 else 0
+)
+
+ratio_ritmo = (
+    ritmo_actual / ritmo_necesario
+    if ritmo_necesario > 0 else 1
+)
+
+
+# ratio >= 1     → ritmo suficiente
+# ratio 0.8-1    → riesgo medio
+# ratio < 0.8    → riesgo alto
+
+if ratio_ritmo >= 1:
+    estado = "🟢 Bajo riesgo"
+    color = "green"
+elif ratio_ritmo >= 0.8:
+    estado = "🟡 Riesgo medio"
+    color = "orange"
+else:
+    estado = "🔴 Alto riesgo"
+    color = "red"
+
+
+st.subheader("Indicador de riesgo operativo")
+
+st.markdown(
+    f"""
+    <div style="
+        background-color:{color};
+        padding:20px;
+        border-radius:10px;
+        text-align:center;
+        font-size:22px;
+        color:white;
+        font-weight:bold;
+    ">
+        {estado}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+st.space("large") # Añade un espacio grande
+st.subheader("Evolución diaria de lecturas")
+
+df_evol = df_base.groupby(df_base["f_lteor"].dt.date).agg({
+    "total_programados":"sum",
+    "total_leidos_ftl":"sum"
+}).reset_index()
+
+df_evol = df_evol.rename(columns={"f_lteor":"fecha"})
+
+df_graf = df_evol.rename(columns={
+    "total_programados": "Lecturas programadas",
+    "total_leidos_ftl": "Lecturas realizadas s/FTL"
+})
+
+# import plotly.express as px
+
 fig = px.line(
     df_graf,
     x="fecha",
@@ -979,7 +1288,7 @@ fig = px.line(
         "variable": "Tipo"
     },
      markers=True,
-     title="Evolución diaria de lecturas s/FTL"
+       title="Evolución diaria de lecturas s/FTL"
 )
 
 fig.update_layout(
@@ -989,6 +1298,19 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, use_container_width=True, key="todo_ftl")
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
