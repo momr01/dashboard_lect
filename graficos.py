@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 import plotly.express as px
 import streamlit as st
+import pandas as pd
 
 def graf_ev_lect_atraso_ritmo(
         df,
@@ -38,6 +39,8 @@ def graf_ev_lect_atraso_ritmo(
     df_graf["Ritmo ideal"] = (
         total_programado / total_dias
     ) * df_graf["dia_n"]
+
+    df_graf["fecha"] = pd.to_datetime(df_graf["fecha"]).dt.strftime("%d")
 
     fig = go.Figure()
 
@@ -89,6 +92,11 @@ def graf_ev_lect_atraso_ritmo(
         yaxis=dict(tickformat=",")
     )
 
+    fig.update_xaxes(type="category"
+                    #  ,  
+                    #  tickangle=-45
+                     )  # 👈 SOLUCIÓN
+
     st.plotly_chart(fig, use_container_width=True, key=key)
 
 
@@ -100,7 +108,8 @@ def graf_ev_lect(
         col_leidos,
         titulo="Evolución diaria de lecturas",
         key="grafico",
-        titulo_col_leidos="Lecturas realizadas"
+        titulo_col_leidos="Lecturas realizadas",
+        mostrar_val=False
     ):
     df_evol = df.groupby(df["f_lteor"].dt.date).agg({
         "total_programados":"sum",
@@ -115,6 +124,9 @@ def graf_ev_lect(
     })
 
     # import plotly.express as px
+    # df_graf["fecha"] = pd.to_datetime(df_graf["fecha"]).dt.strftime("%d-%m")
+    # df_graf["fecha"] = pd.to_datetime(df_graf["fecha"]).dt.strftime("%d-%m-%Y")
+    df_graf["fecha"] = pd.to_datetime(df_graf["fecha"]).dt.strftime("%d")
 
     fig = px.line(
         df_graf,
@@ -138,5 +150,17 @@ def graf_ev_lect(
             tickformat=","
         )
     )
+
+    fig.update_xaxes(type="category"
+                    #  ,  
+                    #  tickangle=-45
+                     )  # 👈 SOLUCIÓN
+
+    if mostrar_val:
+        for trace in fig.data:
+            trace.text = trace.y
+            trace.texttemplate = '%{text:,.0f}'
+            trace.textposition = 'top center'
+            trace.mode = 'lines+markers+text'
 
     st.plotly_chart(fig, use_container_width=True, key=key)
