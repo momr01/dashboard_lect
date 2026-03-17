@@ -164,3 +164,102 @@ def graf_ev_lect(
             trace.mode = 'lines+markers+text'
 
     st.plotly_chart(fig, use_container_width=True, key=key)
+
+
+
+
+
+
+
+# import pandas as pd
+# import plotly.graph_objects as go
+# import streamlit as st
+
+
+def graf_proyeccion_atraso(
+        df,
+        col_leidos="total_leidos_ftl",
+        titulo="Proyección de atraso / adelanto",
+        key="graf_proy"
+    ):
+
+    # Agrupar por fecha
+    df_gap = df.groupby(df["f_lteor"].dt.date).agg({
+        "total_programados": "sum",
+        col_leidos: "sum"
+    }).reset_index()
+
+    df_gap = df_gap.rename(columns={
+        "f_lteor": "fecha",
+        col_leidos: "leidos"
+    })
+
+    # acumulados
+    df_gap["prog_acum"] = df_gap["total_programados"].cumsum()
+    df_gap["leidos_acum"] = df_gap["leidos"].cumsum()
+
+    # promedio diario programado
+    promedio_dia = df_gap["total_programados"].mean()
+
+    # gap en días
+    df_gap["gap_dias"] = (
+        (df_gap["leidos_acum"] - df_gap["prog_acum"])
+        / promedio_dia
+    )
+
+    # atraso positivo
+    df_gap["gap_dias"] = df_gap["gap_dias"] * -1
+
+    # formatear fecha
+    df_gap["fecha_str"] = pd.to_datetime(df_gap["fecha"]).dt.strftime("%d-%m")
+
+    fig = go.Figure()
+
+    # linea principal
+    fig.add_trace(go.Scatter(
+        x=df_gap["fecha_str"],
+        y=df_gap["gap_dias"],
+        mode="lines+markers+text",
+        name="Gap (días)",
+        text=df_gap["gap_dias"].round(1),
+        textposition="top center",
+        line=dict(
+            width=4,
+            color="#22c55e"
+        ),
+        marker=dict(size=8)
+    ))
+
+    # barras atraso
+    fig.add_trace(go.Bar(
+        x=df_gap["fecha_str"],
+        y=df_gap["gap_dias"].clip(lower=0),
+        name="Atraso",
+        marker_color="rgba(239,68,68,0.5)"
+    ))
+
+    # línea cero
+    fig.add_hline(
+        y=0,
+        line_dash="dash",
+        line_color="white"
+    )
+
+    fig.update_layout(
+        title=titulo,
+        xaxis_title="Día",
+        yaxis_title="Gap en días de trabajo",
+        xaxis_tickangle=-90,
+        yaxis=dict(
+            tickformat=".1f"
+        ),
+        legend=dict(
+            orientation="h",
+            y=1.1
+        ),
+        height=500
+    )
+
+    fig.update_xaxes(type="category")
+
+    st.plotly_chart(fig, use_container_width=True, key=key)

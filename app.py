@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_card import card
 import pandas as pd
 from datetime import datetime
 import logging
@@ -6,7 +7,7 @@ import logging
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import timedelta
-from graficos import graf_ev_lect_atraso_ritmo, graf_ev_lect
+from graficos import graf_ev_lect_atraso_ritmo, graf_ev_lect, graf_proyeccion_atraso
 
 # -----------------------------------
 # CONFIG
@@ -56,6 +57,15 @@ st.markdown("""
     color: black;
     margin-top:6px;
 }
+            
+
+div[data-testid="stButton"] button {
+    background: transparent;
+    border: none;
+    height: 100%;
+}
+            
+
 
 </style>
 """, unsafe_allow_html=True)
@@ -74,6 +84,207 @@ def kpi_visual(titulo, valor, color, sub=""):
         """,
         unsafe_allow_html=True
     )
+
+
+
+def kpi_clickable(titulo, valor, color, on_click, key, sub=""):
+
+    container = st.container()
+
+    with container:
+        kpi_visual(
+            titulo,
+            valor,
+            color,
+            sub
+        )
+
+        clicked = st.button(
+            " ",
+            key=key,
+            use_container_width=True
+        )
+
+    if clicked:
+        on_click()
+
+
+
+def kpi_clickable5(titulo, valor, color, on_click, key, sub=""):
+
+    st.markdown(f"""
+    <style>
+    div[data-testid="stButton"][data-key="{key}"] button {{
+        width:100%;
+        border-radius:14px;
+        padding:32px;
+        border:2px solid {color};
+        background:transparent;
+        box-shadow:0 4px 14px rgba(0,0,0,0.35);
+        transition:0.2s;
+    }}
+
+    div[data-testid="stButton"][data-key="{key}"] button:hover {{
+        transform:translateY(-4px);
+        box-shadow:0 10px 22px rgba(0,0,0,0.45);
+    }}
+
+    div[data-testid="stButton"][data-key="{key}"] button p {{
+        margin:0;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+
+    label = f"""
+    <div>
+        <div style="font-size:24px;font-weight:bold;margin-bottom:6px;">
+            {titulo}
+        </div>
+
+        <div style="font-size:54px;font-weight:700;color:{color};">
+            {valor}
+        </div>
+
+        <div style="font-size:13px;margin-top:6px;">
+            {sub}
+        </div>
+    </div>
+    """
+
+    if st.button(label, key=key, use_container_width=True):
+        on_click()
+
+
+def kpi_clickable4(titulo, valor, color, on_click, key, sub=""):
+
+    st.markdown("""
+    <style>
+    .kpi-wrapper{
+        position:relative;
+    }
+
+    .kpi-wrapper button{
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        opacity:0;
+        z-index:10;
+        cursor:pointer;
+    }
+
+    .kpi-wrapper:hover{
+        transform:scale(1.02);
+        transition:0.15s;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="kpi-wrapper">', unsafe_allow_html=True)
+
+    if st.button("", key=key, use_container_width=True):
+        on_click()
+
+    kpi_visual(
+        titulo,
+        valor,
+        color,
+        sub
+    )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+def kpi_clickable2(titulo, valor, color, on_click, key):
+
+    st.markdown("""
+    <style>
+    .kpi-clickable {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .kpi-clickable:hover {
+        transform: scale(1.02);
+        transition: 0.15s;
+    }
+
+    .kpi-clickable button {
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        opacity:0;
+        cursor:pointer;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="kpi-clickable">', unsafe_allow_html=True)
+
+    if st.button("", key=key, use_container_width=True):
+        on_click()
+
+    kpi_visual(
+        titulo,
+        valor,
+        color
+    )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+
+
+
+def kpi_clickable3(titulo, valor, color, on_click, key):
+
+    kpi_html = f"""
+    <div style="
+        padding:20px;
+        border-radius:12px;
+        background-color:#111827;
+        border-left:6px solid {color};
+        text-align:center;
+    ">
+        <div style="
+            font-size:14px;
+            color:#9ca3af;
+            font-weight:600;
+        ">
+            {titulo}
+        </div>
+
+        <div style="
+            font-size:32px;
+            font-weight:700;
+            color:{color};
+        ">
+            {valor}
+        </div>
+    </div>
+    """
+
+    if st.button("", key=key, use_container_width=True):
+        on_click()
+
+    st.markdown(
+        f"""
+        <style>
+        div[data-testid="stButton"][key="{key}"] button {{
+            background:transparent;
+            border:none;
+            padding:0;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(kpi_html, unsafe_allow_html=True)
+
 
 st.title("📊 Dashboard de Lecturas")
 
@@ -388,6 +599,25 @@ else:
 
 
 
+# KPI 1, version 2
+df_dias = df_filtrado.groupby("f_lteor").agg({
+    "total_programados": "sum",
+    "total_leidos_ftl": "sum"
+}).reset_index()
+
+promedio_dia = df_dias["total_programados"].mean()
+
+df_dias["gap_dias"] = (
+    (df_dias["total_leidos_ftl"] - df_dias["total_programados"])
+    / promedio_dia
+)
+
+kpi_atraso2 = round(max(0, -df_dias["gap_dias"].sum()), 2)
+
+
+
+
+
 # KPI 2
 kpi_reglamentarios = df_filtrado["reglamentarios"].mean()
 # kpi_reglamentarios = df_filtrado_regl["reglamentarios"].mean()
@@ -588,14 +818,56 @@ st.space("large") # Añade un espacio grande
 #     "% LECTURAS PENDIENTES",
 #     f"{porcentaje_pendientes:.2f}%"
 # )
+
+
+# if "ver_detalle_atraso" not in st.session_state:
+#     st.session_state.ver_detalle_atraso = False
+
+@st.dialog("Detalle de atraso")
+def mostrar_detalle_atraso():
+
+    st.subheader("Evolución del atraso")
+
+    fig = px.line(df_dias, x="f_lteor", y="gap_dias")
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.subheader("Detalle por día")
+    st.dataframe(df_dias)
+
+    if st.button("Cerrar"):
+        st.rerun()
+
+
+
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     kpi_visual(
         "ATRASO",
-        f"{kpi_atraso}",
+        f"{kpi_atraso2}",
         "#ef4444"
     )
+#     if st.button("Ver detalle atraso"):
+#         mostrar_detalle_atraso()
+    # mostrar_detalle_atraso()
+    # if st.button("Ver detalle"):
+    #     st.session_state.ver_detalle_atraso = True
+
+# with col1:
+#     kpi_clickable(
+#         "ATRASO",
+#         f"{kpi_atraso2}",
+#         "#ef4444",
+#         mostrar_detalle_atraso,
+#         "kpi_atraso"
+#     )
+
+
+
+
+
+
 
 with col2:
     kpi_visual(
@@ -635,6 +907,25 @@ with col4:
 #     f"{promedio_requerido:,.0f} / día"
 # )
 
+
+
+
+# MODAL
+# if st.session_state.ver_detalle_atraso:
+
+#     with st.dialog("Detalle de atraso"):
+
+#         st.subheader("Evolución del atraso")
+
+#         fig = px.line(df_dias, x="f_lteor", y="gap_dias")
+#         st.plotly_chart(fig, use_container_width=True)
+
+#         st.subheader("Detalle por día")
+#         st.dataframe(df_dias)
+
+#         if st.button("Cerrar"):
+#             st.session_state.ver_detalle_atraso = False
+
 col5, col6, col7 = st.columns(3)
 
 with col5:
@@ -661,6 +952,33 @@ with col7:
 
 
 
+
+
+
+col8, col9 = st.columns(2)
+
+with col8:
+
+    clicked = card(
+        title="ATRASO",
+        text=f"{kpi_atraso2}",
+        styles={
+            "card": {
+                "border": "2px solid #ef4444",
+                "border-radius": "14px",
+                "padding": "30px",
+                "text-align": "center",
+            },
+            "text": {
+                "color": "#ef4444",
+                "font-size": "40px",
+                "font-weight": "bold"
+            },
+        }
+    )
+
+    if clicked:
+        mostrar_detalle_atraso()
 
 
 
@@ -711,6 +1029,7 @@ with col3:
         "Fecha estimada de finalización",
         fecha_estimada_fin.strftime("%d-%m-%Y")
     )
+
 
 
 
@@ -808,6 +1127,24 @@ st.line_chart(
 
 
 
+
+
+
+
+graf_proyeccion_atraso(
+    df_base,
+    col_leidos="total_leidos_ftl",
+    titulo="Proyección de atraso lecturas FTL",
+    key="graf_atraso_ftl"
+)
+
+
+graf_proyeccion_atraso(
+    df_filtrado,
+    col_leidos="total_leidos_ftl",
+    titulo="Proyección de atraso lecturas FTL",
+    key="graf_atraso_ftl2"
+)
 
 
 
