@@ -64,6 +64,24 @@ div[data-testid="stButton"] button {
     border: none;
     height: 100%;
 }
+
+/* CONTENEDOR DEL MODAL */
+div[data-testid="stDialog"] div[role="dialog"] {
+    width: 90vw !important;
+    max-width: 90vw !important;
+}
+
+/* CONTENIDO SCROLLEABLE */
+div[data-testid="stDialog"] div[role="dialog"] > div {
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+/* evita ese fondo raro abajo */
+div[data-testid="stDialog"] {
+    background: rgba(0,0,0,0.4);
+}
             
 
 
@@ -828,11 +846,28 @@ def mostrar_detalle_atraso():
 
     st.subheader("Evolución del atraso")
 
+    # st.subheader("Detalle por día")
+
+    # container_tabla = st.container()
+
+    # with container_tabla:
+    #     st.dataframe(
+    #         df_dias,
+    #         use_container_width=True,
+    #         height=400
+    #     )
+
     fig = px.line(df_dias, x="f_lteor", y="gap_dias")
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Detalle por día")
-    st.dataframe(df_dias)
+    st.dataframe(df_dias, use_container_width=True)
+
+    # st.dataframe(
+    #     df_dias,
+    #     use_container_width=True,
+    #     height=400  # 👈 CLAVE
+    # )
 
     if st.button("Cerrar"):
         st.rerun()
