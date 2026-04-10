@@ -995,6 +995,12 @@ if "active_dialog" not in st.session_state:
 if "open_dialog" not in st.session_state:
     st.session_state.open_dialog = False
 
+if "last_dialog" not in st.session_state:
+    st.session_state.last_dialog = None
+
+
+    
+
 @st.dialog("Plazos Reglamentarios") 
 def dialog_reglamentarios(): 
     st.subheader("Plazos Reglamentarios") 
@@ -1033,8 +1039,9 @@ with col8:
             },
         }
     ):
-        st.session_state.active_dialog = "pendientes"
-        st.session_state.open_dialog = True
+        if st.session_state.active_dialog != "pendientes":
+            st.session_state.active_dialog = "pendientes"
+            st.session_state.open_dialog = True
 
 
 
@@ -1057,11 +1064,15 @@ with col9:
             },
         }
     ):
-        st.session_state.active_dialog = "avance"
-        st.session_state.open_dialog = True
+        if st.session_state.active_dialog != "avance":
+            st.session_state.active_dialog = "avance"
+            st.session_state.open_dialog = True
 
 
 if st.session_state.open_dialog:
+
+    # 🔥 FORZAR CIERRE DEL ANTERIOR
+    st.session_state.last_dialog = st.session_state.active_dialog
 
     if st.session_state.active_dialog == "pendientes":
         dialog_pendientes()
@@ -1069,7 +1080,6 @@ if st.session_state.open_dialog:
     elif st.session_state.active_dialog == "avance":
         dialog_avance()
 
-    # 🔥 reset inmediato
     st.session_state.open_dialog = False
 
 
