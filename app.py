@@ -987,6 +987,11 @@ with col7:
 
 
 
+#########################################################################################################################
+
+if "active_dialog" not in st.session_state:
+    st.session_state.active_dialog = None
+    
 
 @st.dialog("Plazos Reglamentarios") 
 def dialog_reglamentarios(): 
@@ -1009,7 +1014,7 @@ col8, col9 = st.columns(2)
 
 with col8:
 
-    clicked = card(
+    if card(
         title="ATRASOOOO+++",
         text=f"{kpi_atraso2}",
         styles={
@@ -1025,17 +1030,14 @@ with col8:
                 "font-weight": "bold"
             },
         }
-    )
-
-    if clicked:
-        dialog_pendientes()
-        # mostrar_detalle_atraso()
+    ):
+        st.session_state.active_dialog = "pendientes"
 
 
 
 with col9:
 
-    clicked = card(
+    if card(
         title="ATRASO COLUMNA 9",
         text=f"{promedio_requerido}",
         styles={
@@ -1051,13 +1053,15 @@ with col9:
                 "font-weight": "bold"
             },
         }
-    )
-
-    if clicked:
-        dialog_avance()
-        # mostrar_detalle_atraso()
+    ):
+        st.session_state.active_dialog = "avance"
 
 
+if st.session_state.active_dialog == "pendientes":
+    dialog_pendientes()
+
+elif st.session_state.active_dialog == "avance":
+    dialog_avance()
 
 
 
