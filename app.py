@@ -1033,6 +1033,32 @@ with col8:
 
 
 
+with col9:
+
+    clicked = card(
+        title="ATRASO COLUMNA 9",
+        text=f"{promedio_requerido}",
+        styles={
+            "card": {
+                "border": "2px solid #ef4444",
+                "border-radius": "14px",
+                "padding": "30px",
+                "text-align": "center",
+            },
+            "text": {
+                "color": "#ef4444",
+                "font-size": "40px",
+                "font-weight": "bold"
+            },
+        }
+    )
+
+    if clicked:
+        dialog_avance()
+        # mostrar_detalle_atraso()
+
+
+
 
 
 
