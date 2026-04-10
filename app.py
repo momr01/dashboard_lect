@@ -1032,6 +1032,7 @@ with col8:
         }
     ):
         st.session_state.active_dialog = "pendientes"
+        st.rerun()   # 🔥 CLAVE
 
 
 
@@ -1055,6 +1056,7 @@ with col9:
         }
     ):
         st.session_state.active_dialog = "avance"
+        st.rerun()   # 🔥 CLAVE
 
 
 if st.session_state.active_dialog == "pendientes":
