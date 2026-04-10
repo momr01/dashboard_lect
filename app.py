@@ -1018,6 +1018,23 @@ def dialog_pendientes():
     st.subheader("Lecturas pendientes") 
     st.write("Contenido...")
 
+@st.dialog("Detalle KPI")
+def dialog_unico():
+
+    tipo = st.session_state.active_dialog
+
+    if tipo == "pendientes":
+        st.subheader("Lecturas pendientes")
+        st.write("Contenido...")
+
+    elif tipo == "avance":
+        st.subheader("Avance de descarga")
+        fig = px.line(df_dias, x="f_lteor", y="gap_dias")
+        st.plotly_chart(fig, use_container_width=True)
+        st.dataframe(df_dias, use_container_width=True)
+
+        
+
 col8, col9 = st.columns(2)
 
 with col8:
@@ -1069,21 +1086,12 @@ with col9:
             st.session_state.open_dialog = True
 
 
+
+
+
 if st.session_state.open_dialog:
-
-    # 🔥 FORZAR CIERRE DEL ANTERIOR
-    st.session_state.last_dialog = st.session_state.active_dialog
-
-    if st.session_state.active_dialog == "pendientes":
-        dialog_pendientes()
-
-    elif st.session_state.active_dialog == "avance":
-        dialog_avance()
-
+    dialog_unico()
     st.session_state.open_dialog = False
-
-
-
 
 
 
