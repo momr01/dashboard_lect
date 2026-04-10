@@ -991,7 +991,9 @@ with col7:
 
 if "active_dialog" not in st.session_state:
     st.session_state.active_dialog = None
-    
+
+if "open_dialog" not in st.session_state:
+    st.session_state.open_dialog = False
 
 @st.dialog("Plazos Reglamentarios") 
 def dialog_reglamentarios(): 
@@ -1032,8 +1034,7 @@ with col8:
         }
     ):
         st.session_state.active_dialog = "pendientes"
-        dialog_pendientes()
-        st.rerun()   # 🔥 CLAVE
+        st.session_state.open_dialog = True
 
 
 
@@ -1057,15 +1058,19 @@ with col9:
         }
     ):
         st.session_state.active_dialog = "avance"
+        st.session_state.open_dialog = True
+
+
+if st.session_state.open_dialog:
+
+    if st.session_state.active_dialog == "pendientes":
+        dialog_pendientes()
+
+    elif st.session_state.active_dialog == "avance":
         dialog_avance()
-        st.rerun()   # 🔥 CLAVE
 
-
-if st.session_state.active_dialog == "pendientes":
-    dialog_pendientes()
-
-elif st.session_state.active_dialog == "avance":
-    dialog_avance()
+    # 🔥 reset inmediato
+    st.session_state.open_dialog = False
 
 
 
