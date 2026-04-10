@@ -995,7 +995,7 @@ col8, col9 = st.columns(2)
 with col8:
 
     clicked = card(
-        title="ATRASO",
+        title="ATRASOOOO+++",
         text=f"{kpi_atraso2}",
         styles={
             "card": {
