@@ -988,7 +988,22 @@ with col7:
 
 
 
+@st.dialog("Plazos Reglamentarios") 
+def dialog_reglamentarios(): 
+    st.subheader("Plazos Reglamentarios") 
+    st.write("Contenido...") 
 
+@st.dialog("Avance de Descarga") 
+def dialog_avance(): 
+    st.subheader("Avance de descarga") 
+    fig = px.line(df_dias, x="f_lteor", y="gap_dias") 
+    st.plotly_chart(fig, use_container_width=True) 
+    st.dataframe(df_dias, use_container_width=True) 
+
+@st.dialog("Lecturas Pendientes") 
+def dialog_pendientes(): 
+    st.subheader("Lecturas pendientes") 
+    st.write("Contenido...")
 
 col8, col9 = st.columns(2)
 
@@ -1013,7 +1028,8 @@ with col8:
     )
 
     if clicked:
-        mostrar_detalle_atraso()
+        dialog_pendientes()
+        # mostrar_detalle_atraso()
 
 
 
