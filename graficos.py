@@ -140,8 +140,9 @@ def graf_ev_lect(
         markers=True,
         title=titulo,
         color_discrete_sequence=[
-        "#2563eb",  # azul programados
-        "#16a34a",  # verde leídos
+        "#E31212", #ROJO PROGRAMADOS
+        "#2563eb"  # azul LEIDOS
+        #"#16a34a",  # verde leídos
      ]
     )
 
